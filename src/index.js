@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } =  require('electron');
+const { app, BrowserWindow, Menu, ipcMain } =  require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -16,7 +16,13 @@ let newProductWindow;
 
 //muestra una ventana en cuanto inicia el programa
 app.on('ready', () => {
-    mainWindow = new BrowserWindow({})
+    mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true
+        }
+    });
+
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'views/index.html'),
         protocolo: 'file',
@@ -35,10 +41,14 @@ app.on('ready', () => {
 function createNewProductWindow(){
     newProductWindow = new BrowserWindow({
         width: 400,
-        height: 330,
-        title: 'Añade un nuevo producto'
+        height: 450,
+        title: 'Añade un nuevo producto',
+        webPreferences:{
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true
+        }
     });
-    newProductWindow.setMenu(null);
+    // newProductWindow.setMenu(null);
     newProductWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'views/new-product.html'),
         protocolo: 'file',
@@ -50,6 +60,11 @@ function createNewProductWindow(){
     })
 }
 
+ipcMain.on('producto:nuevo', (e, nuevoProducto) =>{
+    mainWindow.webContents.send('producto:nuevo', nuevoProducto);
+    newProductWindow.close();
+});
+
 const templateMenu = [
     {
         label: 'File',
@@ -60,7 +75,41 @@ const templateMenu = [
                 click(){
                     createNewProductWindow()
                 }
+            },
+            {
+                label: 'Borrar todos los productos'
+            },
+            {
+                label: 'Salir',
+                accelerator: process.platform == 'darwin' ? 'command+Q' : 'Ctrl+Q',
+                click(){
+                    app.quit();
+                }
             }
         ]
     }
-]
+];
+
+if(process.platform === 'darwin') {
+    templateMenu.unshift({
+        label: app.getName()
+    });
+}
+
+if(process.env.NODE_ENV !== 'production') {
+    templateMenu.push({
+        label: 'Herramientas de desarrollo',
+        submenu: [
+            {
+                label: 'Mostrar/Oculatr las herramientas de desarrollo',
+                accelerator: 'Ctrl+D',
+                click(item, focusedWindow){
+                    focusedWindow.toggleDevTools();
+                }
+            },
+            {
+                role: 'reload'
+            }
+        ]
+    })
+}
