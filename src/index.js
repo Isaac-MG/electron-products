@@ -77,7 +77,10 @@ const templateMenu = [
                 }
             },
             {
-                label: 'Borrar todos los productos'
+                label: 'Borrar todos los productos',
+                click() {
+                    mainWindow.webContents.send('productos:borrar-todos');
+                }
             },
             {
                 label: 'Salir',
