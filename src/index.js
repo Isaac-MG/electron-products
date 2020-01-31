@@ -48,7 +48,7 @@ function createNewProductWindow(){
             nodeIntegrationInWorker: true
         }
     });
-    // newProductWindow.setMenu(null);
+    newProductWindow.setMenu(null);
     newProductWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'views/new-product.html'),
         protocolo: 'file',
@@ -99,20 +99,20 @@ if(process.platform === 'darwin') {
     });
 }
 
-if(process.env.NODE_ENV !== 'production') {
-    templateMenu.push({
-        label: 'Herramientas de desarrollo',
-        submenu: [
-            {
-                label: 'Mostrar/Oculatr las herramientas de desarrollo',
-                accelerator: 'Ctrl+D',
-                click(item, focusedWindow){
-                    focusedWindow.toggleDevTools();
-                }
-            },
-            {
-                role: 'reload'
-            }
-        ]
-    })
-}
+// if(process.env.NODE_ENV !== 'production') {
+//     templateMenu.push({
+//         label: 'Herramientas de desarrollo',
+//         submenu: [
+//             {
+//                 label: 'Mostrar/Oculatr las herramientas de desarrollo',
+//                 accelerator: 'Ctrl+D',
+//                 click(item, focusedWindow){
+//                     focusedWindow.toggleDevTools();
+//                 }
+//             },
+//             {
+//                 role: 'reload'
+//             }
+//         ]
+//     })
+// }
